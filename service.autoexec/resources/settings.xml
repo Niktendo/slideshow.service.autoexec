@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<settings>
-    <category label="Settings">
-        <setting label="Pictures folder" type="folder" id="pictures_folder" option="writable"/>
-        <setting label="Display time" type="number" id="display_time" default="5"/>
-        <setting label="Include weather" type="bool" id="enable_weather" default="false"/>
-    </category>
-</settings>
