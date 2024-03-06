@@ -2,7 +2,8 @@
 <settings>
     <category label="Settings">
         <setting label="Pictures folder" type="folder" id="pictures_folder" option="writable"/>
-        <setting label="Display time" type="number" id="display_time" default="5"/>
+        <setting label="Picture display time" type="number" id="picture_display_time" default="5"/>
+        <setting label="Weather display time" type="number" id="weather_display_time" default="5"/>
         <setting label="Include weather" type="bool" id="enable_weather" default="false"/>
     </category>
 </settings>
