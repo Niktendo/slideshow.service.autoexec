@@ -17,15 +17,13 @@ if pictures_folder == "":
 while not xbmc.Monitor().waitForAbort(5):
 	break
 
-xbmcgui.Dialog().ok(pictures_folder)
-#while True:
-#	for dirpath,_,filenames in os.walk(pictures_folder):
-#		for file in filenames:
-#			xbmcgui.Dialog().ok(file)
-#			xbmc.executebuiltin("ShowPicture(" + os.path.abspath(os.path.join(dirpath, file)) + ")")
-#			time.sleep(picture_display_time)
-#	
-#	if xbmcaddon.Addon().getSetting("enable_weather") == 'true':
-#		xbmc.executebuiltin('Dialog.Close(all,force)')
-#		xbmc.executebuiltin("ActivateWindow(Weather)")
-#		time.sleep(weather_display_time)
+while True:
+	for dirpath,_,filenames in os.walk(pictures_folder):
+		for file in filenames:
+			xbmc.executebuiltin("ShowPicture(" + os.path.abspath(os.path.join(dirpath, file)) + ")")
+			time.sleep(picture_display_time)
+	
+	if xbmcaddon.Addon().getSetting("enable_weather") == 'true':
+		xbmc.executebuiltin('Dialog.Close(all,force)')
+		xbmc.executebuiltin("ActivateWindow(Weather)")
+		time.sleep(weather_display_time)
