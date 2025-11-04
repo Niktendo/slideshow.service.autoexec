@@ -3,8 +3,13 @@ import xbmcaddon
 import xbmcgui
 import xbmcvfs
 
+enable_video = xbmcaddon.Addon().getSetting("enable_video")
+video_file = xbmcaddon.Addon().getSetting("video_file")
+
+enable_slideshow = xbmcaddon.Addon().getSetting("enable_slideshow")
 pictures_folder = xbmcaddon.Addon().getSetting("pictures_folder")
 picture_display_time = int(xbmcaddon.Addon().getSetting("picture_display_time"))
+
 weather_display_time = int(xbmcaddon.Addon().getSetting("weather_display_time"))
 enable_weather = xbmcaddon.Addon().getSetting("enable_weather")
 
@@ -57,34 +62,45 @@ while not xbmc.Monitor().waitForAbort(5):
 
 xbmc.log("Auto Slideshow: Startup wait finished.", level=xbmc.LOGINFO)
 
-if pictures_folder == "":
-    xbmcgui.Dialog().ok("Auto Slideshow", "Pictures folder is not defined. Please check your settings.")
+if video_file == "" and enable_video == 'true' or pictures_folder == "" and enable_slideshow == 'true':
+    xbmcgui.Dialog().ok("Auto Slideshow", "Video file or pictures folder not defined. Please check your settings.")
     exit()
 
-xbmc.log(f"Auto Slideshow: Starting scan of {pictures_folder}", level=xbmc.LOGINFO)
-
-try:
-    picture_files = get_all_images_recursive(pictures_folder)
-    if not picture_files:
-        xbmc.log("Auto Slideshow: No pictures found in folder.", level=xbmc.LOGWARNING)
-        xbmcgui.Dialog().ok("Auto Slideshow", "No pictures found in folder. Please check your settings.")
+if enable_slideshow == 'true':
+    xbmc.log(f"Auto Slideshow: Starting scan of {pictures_folder}", level=xbmc.LOGINFO)
+    try:
+        picture_files = get_all_images_recursive(pictures_folder)
+        if not picture_files:
+            xbmc.log("Auto Slideshow: No pictures found in folder.", level=xbmc.LOGWARNING)
+            xbmcgui.Dialog().ok("Auto Slideshow", "No pictures found in folder. Please check your settings.")
+            exit()
+        picture_files.sort(key=natural_sort_key)
+        xbmc.log(f"Auto Slideshow: Scan complete, {len(picture_files)} images found.", level=xbmc.LOGINFO)
+        
+    except Exception as e:
+        xbmc.log(f"Auto Slideshow: Critical error during scan: {e}", level=xbmc.LOGERROR)
+        xbmcgui.Dialog().ok("Auto Slideshow", f"Error scanning folder: {e}")
         exit()
-    picture_files.sort(key=natural_sort_key)
-    xbmc.log(f"Auto Slideshow: Scan complete, {len(picture_files)} images found.", level=xbmc.LOGINFO)
-    
-except Exception as e:
-    xbmc.log(f"Auto Slideshow: Critical error during scan: {e}", level=xbmc.LOGERROR)
-    xbmcgui.Dialog().ok("Auto Slideshow", f"Error scanning folder: {e}")
-    exit()
 
 while True:
-    for picture_file in picture_files:
-        xbmc.executebuiltin(f"ShowPicture({picture_file})")
-        while not xbmc.Monitor().waitForAbort(picture_display_time):
-            break
-    
+    if enable_video == 'true':
+        xbmc.executebuiltin('Dialog.Close(all,true)')
+        xbmc.executebuiltin(f"PlayMedia({video_file})")
+        while not xbmc.Player().isPlaying():
+            pass
+        while xbmc.Player().isPlaying():
+            if xbmc.Monitor().waitForAbort(0.1):
+                exit()
+
+    if enable_slideshow == 'true':
+        xbmc.executebuiltin('Dialog.Close(all,true)')
+        for picture_file in picture_files:
+            xbmc.executebuiltin(f"ShowPicture({picture_file})")
+            if xbmc.Monitor().waitForAbort(picture_display_time):
+                exit()
+
     if enable_weather == 'true':
-        xbmc.executebuiltin('Dialog.Close(all,force)')
+        xbmc.executebuiltin('Dialog.Close(all,true)')
         xbmc.executebuiltin("ActivateWindow(Weather)")
-        while not xbmc.Monitor().waitForAbort(weather_display_time):
-            break
+        if xbmc.Monitor().waitForAbort(weather_display_time):
+            exit()
