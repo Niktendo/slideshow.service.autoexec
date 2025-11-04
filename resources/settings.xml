@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
     <category label="Settings">
-        <setting label="Pictures folder" type="folder" id="pictures_folder" option="writable"/>
-        <setting label="Picture display time" type="number" id="picture_display_time" default="5"/>
-        <setting label="Weather display time" type="number" id="weather_display_time" default="5"/>
+        <setting label="Include video" type="bool" id="enable_video" default="false"/>
+        <setting label="Video file" type="file" id="video_file" visible="eq(-1,true)"/>
+        <setting label="Include slideshow" type="bool" id="enable_slideshow" default="true"/>
+        <setting label="Pictures folder" type="folder" id="pictures_folder" option="writable" visible="eq(-1,true)"/>
+        <setting label="Picture display time" type="number" id="picture_display_time" default="5" visible="eq(-2,true)"/>
         <setting label="Include weather" type="bool" id="enable_weather" default="false"/>
+        <setting label="Weather display time" type="number" id="weather_display_time" default="5" visible="eq(-1,true)"/>
     </category>
 </settings>
